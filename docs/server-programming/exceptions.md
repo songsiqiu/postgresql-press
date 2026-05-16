@@ -27,6 +27,28 @@ $$;
 
 这个函数把数据库底层错误转换成更容易理解的业务错误。
 
+## 可照着跑：补充上下文再抛错
+
+```sql
+CREATE OR REPLACE FUNCTION app.require_positive_amount(amount numeric)
+RETURNS numeric
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  IF amount <= 0 THEN
+    RAISE EXCEPTION '金额必须大于 0，当前值为 %', amount
+      USING ERRCODE = '22023';
+  END IF;
+
+  RETURN amount;
+END;
+$$;
+
+SELECT app.require_positive_amount(-10);
+```
+
+这个例子没有吞掉错误，而是让错误更明确。调用方仍然会知道这次操作失败。
+
 ## 什么时候处理
 
 - 错误是预期内的，并且有明确处理方式
@@ -67,6 +89,7 @@ $$;
 - 把数据质量问题藏在函数内部
 - 错误提示太模糊，调用方无法定位
 - 用异常处理替代正常条件判断
+- 抛错信息没有带关键上下文，排查时只能猜
 
 ## 先记住这三句
 

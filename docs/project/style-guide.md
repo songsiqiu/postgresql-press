@@ -163,6 +163,14 @@
 | `point` | `point` |
 | `oid` | `oid` |
 | `regclass` | `regclass` |
+| authentication | 认证 |
+| authorization | 授权 |
+| `statement_timeout` | `statement_timeout` |
+| `lock_timeout` | `lock_timeout` |
+| `SET LOCAL` | `SET LOCAL` |
+| trigger function | 触发器函数 |
+| row lock | 行锁 |
+| blocking session | 阻塞会话 |
 
 ## 表达禁忌
 

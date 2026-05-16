@@ -211,6 +211,13 @@
 | `point` | `point` | 平面坐标点类型 |
 | `oid` | `oid` | 对象标识符类型 |
 | `regclass` | `regclass` | 用来解析表、索引、序列等关系对象名的类型 |
+| authentication | 认证 | 判断连接者是谁、能不能进入数据库 |
+| authorization | 授权 | 判断进入数据库后能做什么 |
+| `statement_timeout` | `statement_timeout` | 限制单条 SQL 最长执行时间的参数 |
+| `lock_timeout` | `lock_timeout` | 限制等待锁最长时间的参数 |
+| `SET LOCAL` | `SET LOCAL` | 只在当前事务内临时设置参数 |
+| trigger function | 触发器函数 | 被触发器自动调用的函数 |
+| blocking session | 阻塞会话 | 正在让其他会话等待的会话 |
 | conditional function | 条件函数 | 根据空值或比较结果返回不同值的函数 |
 | numeric type | 数值类型 | 保存整数、精确小数或近似小数的类型 |
 | character type | 字符类型 | 保存文本的类型 |

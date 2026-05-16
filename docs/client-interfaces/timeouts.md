@@ -30,6 +30,34 @@ WHERE created_at >= CURRENT_DATE - INTERVAL '30 days';
 
 如果这条 SQL 超过 5 秒还没完成，会被取消。
 
+## 应用里怎么写
+
+可以在一次连接或一次事务开始时设置本次操作的边界：
+
+```js
+const client = await pool.connect()
+
+try {
+  await client.query('BEGIN')
+  await client.query("SET LOCAL statement_timeout = '5s'")
+  await client.query("SET LOCAL lock_timeout = '1s'")
+
+  await client.query(
+    'UPDATE accounts SET balance = balance - $1 WHERE id = $2',
+    [amount, accountId]
+  )
+
+  await client.query('COMMIT')
+} catch (error) {
+  await client.query('ROLLBACK')
+  throw error
+} finally {
+  client.release()
+}
+```
+
+`SET LOCAL` 的作用范围在当前事务里，更适合给某个业务动作设置临时边界。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -63,6 +91,7 @@ WHERE created_at >= CURRENT_DATE - INTERVAL '30 days';
 - 用很长超时掩盖慢查询
 - 没有设置锁等待边界
 - SQL 被取消后应用没有处理错误
+- 把全局超时改得很激进，影响后台任务和报表任务
 
 ## 先记住这三句
 

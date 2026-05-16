@@ -37,6 +37,37 @@ SELECT add_one(5);
 
 触发器是在插入、更新、删除时自动执行的逻辑。比如写入数据时自动维护更新时间。
 
+## 可照着跑：自动维护更新时间
+
+```sql
+CREATE TABLE demo_notes (
+  id bigserial PRIMARY KEY,
+  body text NOT NULL,
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER demo_notes_set_updated_at
+BEFORE UPDATE ON demo_notes
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();
+
+INSERT INTO demo_notes (body) VALUES ('first');
+UPDATE demo_notes SET body = 'changed' WHERE id = 1;
+SELECT id, body, updated_at FROM demo_notes;
+```
+
+这个例子适合触发器，因为它是明确、局部、靠近数据的自动维护逻辑。
+
 ## 练习题
 
 1. 函数和普通 SQL 查询最大的区别是什么？
@@ -58,10 +89,10 @@ SELECT add_one(5);
 - 触发器里藏了太多业务逻辑
 - 函数权限没有想清楚
 - 递归触发或重复更新导致难排查
+- 触发器改了数据，应用日志里却看不出是谁改的
 
 ## 先记住这三句
 
 - 函数是可复用的数据库逻辑。
 - 触发器是自动执行的数据库逻辑。
 - 能放应用层的复杂业务，不要随便藏进触发器。
-

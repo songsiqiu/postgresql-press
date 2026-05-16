@@ -29,6 +29,27 @@ WHERE name = $1;
 
 `$1` 是占位符，真实值由数据库驱动绑定进去。
 
+## 应用里怎么写
+
+下面用接近 Node.js 驱动的写法说明参数绑定：
+
+```js
+const result = await db.query(
+  'SELECT id, email FROM demo_users WHERE email = $1',
+  [email]
+)
+```
+
+不要这样写：
+
+```js
+const result = await db.query(
+  `SELECT id, email FROM demo_users WHERE email = '${email}'`
+)
+```
+
+第一种写法里，SQL 结构是固定的，`email` 只是参数值；第二种写法会让用户输入影响 SQL 结构。
+
 ## SQL 结构和参数值
 
 | 部分 | 例子 | 说明 |
@@ -66,10 +87,10 @@ WHERE name = $1;
 - 只在部分接口用参数绑定，其他地方仍然拼接
 - 把表名、列名也当普通参数随便绑定
 - 以为用了预处理就不需要索引和执行计划
+- 拼接 `ORDER BY`、表名、列名时没有做白名单
 
 ## 先记住这三句
 
 - 用户输入不要拼进 SQL。
 - 参数绑定把 SQL 结构和值分开。
 - 预处理有帮助，但不是万能性能优化。
-

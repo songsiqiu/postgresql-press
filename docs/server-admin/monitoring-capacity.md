@@ -37,6 +37,40 @@
 4. 是否出现新的慢查询
 5. 表增长是否异常
 
+## 操作步骤：每天 5 分钟巡检
+
+下面这些 SQL 不替代完整监控系统，但适合新手先建立排查手感。
+
+查看当前连接状态：
+
+```sql
+SELECT state, count(*)
+FROM pg_stat_activity
+GROUP BY state
+ORDER BY count(*) DESC;
+```
+
+查看长事务：
+
+```sql
+SELECT pid, usename, state, now() - xact_start AS xact_age, query
+FROM pg_stat_activity
+WHERE xact_start IS NOT NULL
+ORDER BY xact_age DESC
+LIMIT 5;
+```
+
+查看大表：
+
+```sql
+SELECT relname, pg_size_pretty(pg_total_relation_size(relid)) AS total_size
+FROM pg_catalog.pg_statio_user_tables
+ORDER BY pg_total_relation_size(relid) DESC
+LIMIT 10;
+```
+
+这些结果要连续看趋势。今天第一名的大表不一定有问题，但一周内突然暴涨就值得查。
+
 ## 练习题
 
 1. 为什么容量规划要看趋势？
@@ -60,10 +94,10 @@
 - 只看 CPU，不看连接、锁和慢查询
 - 等磁盘快满了才处理
 - 只看当前值，不看增长趋势
+- 巡检 SQL 查到了异常，却没有记录时间和当时业务背景
 
 ## 先记住这三句
 
 - 监控要覆盖连接、磁盘、SQL、锁和复制。
 - 容量管理看趋势，不只看今天。
 - 巡检清单越固定，越不容易漏。
-
