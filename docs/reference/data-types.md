@@ -23,6 +23,13 @@
 | `uuid` | 全局唯一标识 | [UUID 速查](/reference/uuid) |
 | `text[]` | 文本数组 | [数组与范围类型速查](/reference/array-range-types) |
 | `tstzrange` | 带时区时间范围 | [数组与范围类型速查](/reference/array-range-types) |
+| `inet` | IP 地址 | [网络地址类型速查](/reference/network-address-types) |
+| `order_status` | 稳定状态枚举 | [枚举类型速查](/reference/enum-types) |
+| `bit(4)` | 位标志或掩码 | [位串类型速查](/reference/bit-string-types) |
+| `xml` | XML 报文或片段 | [XML 类型速查](/reference/xml-types) |
+| `point` | 平面坐标点 | [几何类型速查](/reference/geometric-types) |
+| `oid` | 系统对象标识 | [对象标识符类型速查](/reference/object-identifier-types) |
+| `money_with_currency` | 一组固定子字段 | [复合类型速查](/reference/composite-types) |
 
 ## 选择建议
 
@@ -40,6 +47,13 @@
 - [JSONB 类型速查](/reference/jsonb-types)
 - [数组与范围类型速查](/reference/array-range-types)
 - [UUID 速查](/reference/uuid)
+- [网络地址类型速查](/reference/network-address-types)
+- [枚举类型速查](/reference/enum-types)
+- [位串类型速查](/reference/bit-string-types)
+- [XML 类型速查](/reference/xml-types)
+- [几何类型速查](/reference/geometric-types)
+- [对象标识符类型速查](/reference/object-identifier-types)
+- [复合类型速查](/reference/composite-types)
 
 ## 练习题
 

@@ -30,6 +30,32 @@
 - 版本和扩展是否兼容
 - 是否有人正在使用目标库
 
+## 操作步骤：做一次逻辑备份演练
+
+下面是一条常见演练路线，适合小库或单库迁移前验证：
+
+```bash
+pg_dump -h localhost -U app_user -d app_db -Fc -f app_db.dump
+createdb -h localhost -U app_user app_db_restore_test
+pg_restore -h localhost -U app_user -d app_db_restore_test app_db.dump
+```
+
+恢复完成后，不要只看命令有没有报错，还要抽查表数量、关键表行数、扩展和业务关键查询。
+
+```sql
+SELECT count(*) FROM information_schema.tables
+WHERE table_schema = 'public';
+```
+
+## 排障场景：恢复失败先看什么
+
+| 现象 | 先查什么 |
+| --- | --- |
+| 连接不上目标库 | 主机、端口、用户、认证规则 |
+| 提示对象已存在 | 是否恢复到了已有库，是否需要空库 |
+| 提示扩展不存在 | 目标环境是否安装同版本扩展 |
+| 恢复后数据不对 | 备份时间、备份来源、恢复目标是否正确 |
+
 ## 练习题
 
 1. 为什么“有备份文件”不代表安全？
@@ -51,6 +77,7 @@
 - 只备份，从不做恢复演练
 - 恢复前没有确认目标库
 - 忽略扩展和版本差异
+- 只看备份文件存在，不验证能不能恢复
 
 ## 先记住这三句
 

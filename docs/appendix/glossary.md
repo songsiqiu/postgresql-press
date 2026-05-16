@@ -197,6 +197,20 @@
 | full text search | 全文检索 | 按词处理和搜索文本的能力 |
 | sequence function | 序列函数 | 读取或调整序列值的函数 |
 | network address type | 网络地址类型 | 保存 IP、网段和 MAC 地址的类型 |
+| enum type | 枚举类型 | 值只能从固定列表中选择的类型 |
+| bit string type | 位串类型 | 保存一串 0 和 1 的类型 |
+| XML type | XML 类型 | 保存 XML 文档或片段的类型 |
+| geometric type | 几何类型 | 保存点、线、圆、多边形等平面几何对象的类型 |
+| object identifier type | 对象标识符类型 | PostgreSQL 内部标识数据库对象的类型 |
+| composite type | 复合类型 | 多个字段组成的一个类型 |
+| `inet` | `inet` | 保存 IP 地址或带掩码地址的网络地址类型 |
+| `cidr` | `cidr` | 保存网络地址块的网络地址类型 |
+| `macaddr` | `macaddr` | 保存 MAC 地址的类型 |
+| `bit varying` | `bit varying` | 可变长度位串类型 |
+| `xml` | `xml` | PostgreSQL 的 XML 类型 |
+| `point` | `point` | 平面坐标点类型 |
+| `oid` | `oid` | 对象标识符类型 |
+| `regclass` | `regclass` | 用来解析表、索引、序列等关系对象名的类型 |
 | conditional function | 条件函数 | 根据空值或比较结果返回不同值的函数 |
 | numeric type | 数值类型 | 保存整数、精确小数或近似小数的类型 |
 | character type | 字符类型 | 保存文本的类型 |

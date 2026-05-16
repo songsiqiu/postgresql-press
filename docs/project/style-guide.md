@@ -149,6 +149,20 @@
 | jsonb | JSONB |
 | array type | 数组类型 |
 | range type | 范围类型 |
+| enum type | 枚举类型 |
+| bit string type | 位串类型 |
+| XML type | XML 类型 |
+| geometric type | 几何类型 |
+| object identifier type | 对象标识符类型 |
+| composite type | 复合类型 |
+| `inet` | `inet` |
+| `cidr` | `cidr` |
+| `macaddr` | `macaddr` |
+| `bit varying` | `bit varying` |
+| `xml` | `xml` |
+| `point` | `point` |
+| `oid` | `oid` |
+| `regclass` | `regclass` |
 
 ## 表达禁忌
 

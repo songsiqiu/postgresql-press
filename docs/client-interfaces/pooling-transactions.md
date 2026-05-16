@@ -21,6 +21,41 @@
 
 如果第 3 步没做好，连接就会被耗尽。
 
+## 应用里怎么写
+
+下面是接近真实应用的伪代码，重点看 `try/finally`：
+
+```js
+const client = await pool.connect()
+
+try {
+  await client.query('BEGIN')
+
+  await client.query(
+    'INSERT INTO orders(user_id, total_amount) VALUES ($1, $2)',
+    [userId, totalAmount]
+  )
+
+  await client.query(
+    'UPDATE inventory SET stock = stock - 1 WHERE sku = $1 AND stock > 0',
+    [sku]
+  )
+
+  await client.query('COMMIT')
+} catch (error) {
+  await client.query('ROLLBACK')
+  throw error
+} finally {
+  client.release()
+}
+```
+
+这段代码要记住三点：
+
+- 借出来的连接一定要归还
+- 同一个业务事务里的 SQL 要用同一个连接
+- 出错后先回滚，再把错误交给上层处理
+
 ## 事务边界怎么定
 
 事务边界应该跟业务动作一致。比如创建订单：
@@ -72,6 +107,7 @@ COMMIT;
 
 - 每个请求都新建数据库连接
 - 连接用完不归还
+- `BEGIN` 在一个连接上执行，后续 SQL 却跑到另一个连接上
 - 事务里调用慢接口或等待人工确认
 - 把连接池大小当成性能按钮随便调大
 
@@ -80,4 +116,3 @@ COMMIT;
 - 连接池是复用连接，不是制造无限连接。
 - 事务边界要跟业务动作一致。
 - 连接和事务都要尽快释放。
-

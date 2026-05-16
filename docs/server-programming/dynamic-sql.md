@@ -39,6 +39,40 @@ USING target_user_id;
 
 值不要直接拼进字符串里，优先用 `USING` 传入。
 
+## 可照着跑：统计指定模式里的表
+
+```sql
+CREATE SCHEMA IF NOT EXISTS app;
+
+CREATE TABLE IF NOT EXISTS app.notes (
+  id bigserial PRIMARY KEY,
+  user_id bigint NOT NULL,
+  body text NOT NULL
+);
+
+INSERT INTO app.notes (user_id, body)
+VALUES (1, 'hello')
+ON CONFLICT DO NOTHING;
+
+CREATE OR REPLACE FUNCTION app.count_table_rows(schema_name text, table_name text)
+RETURNS bigint
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  result bigint;
+BEGIN
+  EXECUTE format('SELECT count(*) FROM %I.%I', schema_name, table_name)
+  INTO result;
+
+  RETURN result;
+END;
+$$;
+
+SELECT app.count_table_rows('app', 'notes');
+```
+
+这里的模式名和表名都用 `%I` 处理。它们是对象名，不是普通条件值。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |

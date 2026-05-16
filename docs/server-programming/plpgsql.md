@@ -33,6 +33,44 @@ SELECT price_with_tax(100);
 | --- |
 | 113.00 |
 
+## 可照着跑：检查余额是否足够
+
+```sql
+CREATE TABLE demo_accounts (
+  id bigint PRIMARY KEY,
+  balance numeric NOT NULL CHECK (balance >= 0)
+);
+
+INSERT INTO demo_accounts (id, balance)
+VALUES (1, 200.00)
+ON CONFLICT (id) DO UPDATE
+SET balance = EXCLUDED.balance;
+
+CREATE OR REPLACE FUNCTION can_debit(account_id bigint, debit_amount numeric)
+RETURNS boolean
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  current_balance numeric;
+BEGIN
+  SELECT balance
+  INTO current_balance
+  FROM demo_accounts
+  WHERE id = account_id;
+
+  IF current_balance IS NULL THEN
+    RETURN false;
+  END IF;
+
+  RETURN current_balance >= debit_amount;
+END;
+$$;
+
+SELECT can_debit(1, 150.00);
+```
+
+预期结果是 `true`。这个例子展示了变量、查询结果写入变量、条件判断和返回值。
+
 ## 什么时候考虑 PL/pgSQL
 
 - 逻辑必须靠近数据执行
@@ -70,10 +108,10 @@ PL/pgSQL 是数据库里的过程语言，不是应用后端的替代品。
 - 把应用层业务全塞进数据库函数
 - 函数里做过多隐藏修改
 - 没想清楚函数权限和调用身份
+- 函数里查不到数据时，没有明确处理 `NULL`
 
 ## 先记住这三句
 
 - PL/pgSQL 适合靠近数据的流程逻辑。
 - 函数越复杂，越要重视测试和权限。
 - 不要把数据库函数当成后端应用替代品。
-
