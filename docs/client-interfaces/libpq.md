@@ -18,6 +18,36 @@
 
 如果你用的是 Node.js、Java、Go、Python，大多数时候会用对应语言的驱动。只有在写 C 程序、数据库扩展工具、底层迁移工具时，才更可能直接接触 `libpq`。
 
+## 应用里怎么写
+
+下面是 `libpq` 程序的典型流程，重点看顺序，不需要先背函数：
+
+```c
+PGconn *conn = PQconnectdb("host=localhost dbname=app_db user=app_user");
+
+if (PQstatus(conn) != CONNECTION_OK) {
+  /* 记录 PQerrorMessage(conn)，然后关闭连接 */
+  PQfinish(conn);
+  return 1;
+}
+
+PGresult *res = PQexecParams(
+  conn,
+  "SELECT id, email FROM demo_users WHERE email = $1",
+  1,
+  NULL,
+  values,
+  NULL,
+  NULL,
+  0
+);
+
+PQclear(res);
+PQfinish(conn);
+```
+
+真实代码要检查 `PGresult` 状态，并确保 `PQclear` 和 `PQfinish` 被调用。
+
 ## 容易混淆的词
 
 | 词 | 区别 |
@@ -48,6 +78,7 @@
 - 把 `libpq` 当成所有语言都必须直接调用的库
 - 只关注连接成功，忽略错误状态和结果释放
 - 把连接串里的密码写进代码仓库
+- 查询结果没有释放，长时间运行的程序内存上涨
 
 ## 先记住这三句
 

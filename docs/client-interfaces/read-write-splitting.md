@@ -27,6 +27,27 @@
 | 修改资料后立刻回显 | 读主库 |
 | 大报表导出 | 可读副本，但要接受延迟 |
 
+## 应用里怎么写
+
+可以在代码里显式区分读主库和读副本：
+
+```js
+async function getOrderAfterCreate(orderId) {
+  return primaryDb.query(
+    'SELECT id, status, total_amount FROM orders WHERE id = $1',
+    [orderId]
+  )
+}
+
+async function getYesterdayReport() {
+  return replicaDb.query(
+    'SELECT status, count(*) FROM orders WHERE created_at >= CURRENT_DATE - 1 GROUP BY status'
+  )
+}
+```
+
+不要把所有 `SELECT` 都自动丢给副本。刚写完要读自己的结果，优先读主库。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -60,6 +81,7 @@
 - 事务里一半读主库、一半读副本
 - 把所有慢查询都丢给副本，不优化 SQL
 - 没有监控复制延迟
+- 没给“必须读新数据”的接口做主库白名单
 
 ## 先记住这三句
 

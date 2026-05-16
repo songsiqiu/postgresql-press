@@ -18,6 +18,22 @@ CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 
 这类语句通常需要有足够权限才能执行。
 
+## 可照着跑：检查扩展是否安装
+
+```sql
+SELECT extname, extversion
+FROM pg_extension
+ORDER BY extname;
+```
+
+安装扩展前，先确认它解决什么问题、谁维护、是否需要额外配置、升级时是否兼容。
+
+```sql
+CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+```
+
+安装后还要确认它是否真的可用，而不是只看命令成功。
+
 ## 过程语言是什么
 
 过程语言让你用 SQL 之外的语言写数据库函数。常见场景是逻辑比单条 SQL 更复杂，需要条件判断、循环或异常处理。
@@ -43,10 +59,10 @@ CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 - 在生产环境随手安装没评估过的扩展
 - 把过程语言当成应用层替代品
 - 忽略扩展版本和数据库版本的兼容关系
+- 迁移到新环境时忘记安装同样扩展
 
 ## 先记住这三句
 
 - 扩展会改变数据库能力边界。
 - 生产环境安装扩展要先评估。
 - 过程语言适合少量靠近数据的复杂逻辑。
-

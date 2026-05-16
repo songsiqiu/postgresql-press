@@ -25,6 +25,22 @@ CHECK (VALUE > 0);
 
 之后可以把 `positive_amount` 当成一种类型使用，数据库会检查值必须大于 0。
 
+## 可照着跑：把域用到表里
+
+```sql
+CREATE DOMAIN positive_amount AS numeric
+CHECK (VALUE > 0);
+
+CREATE TABLE demo_payments (
+  id bigserial PRIMARY KEY,
+  amount positive_amount NOT NULL
+);
+
+INSERT INTO demo_payments (amount) VALUES (99.90);
+```
+
+如果插入 `0` 或负数，数据库会拒绝。这个例子适合规则非常稳定、并且多处复用的金额约束。
+
 ## 什么时候适合
 
 - 规则稳定
@@ -60,10 +76,10 @@ CHECK (VALUE > 0);
 - 规则没稳定就创建自定义类型
 - 自定义类型太多，迁移变复杂
 - 本来简单的字段被过度抽象
+- 应用迁移工具不支持自定义类型，却没有提前验证
 
 ## 先记住这三句
 
 - 自定义类型表达稳定规则。
 - 域适合复用约束。
 - 先确认维护成本，再决定是否创建。
-

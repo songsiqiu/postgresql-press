@@ -19,6 +19,29 @@ CREATE EXTENSION postgres_fdw;
 
 这个例子只说明能力入口。真实使用还要配置外部服务器、用户映射和外部表。
 
+## 可照着跑：postgres_fdw 的骨架
+
+```sql
+CREATE EXTENSION IF NOT EXISTS postgres_fdw;
+
+CREATE SERVER reporting_db
+FOREIGN DATA WRAPPER postgres_fdw
+OPTIONS (host 'reporting.example.com', dbname 'analytics', port '5432');
+
+CREATE USER MAPPING FOR app_user
+SERVER reporting_db
+OPTIONS (user 'readonly_user', password 'change_me');
+
+CREATE FOREIGN TABLE foreign_orders (
+  id bigint,
+  total_amount numeric
+)
+SERVER reporting_db
+OPTIONS (schema_name 'public', table_name 'orders');
+```
+
+这只是结构示例。真实项目里密码应放在安全位置，并评估外部库压力。
+
 ## 外部表和普通表
 
 | 类型 | 数据在哪里 |
@@ -56,10 +79,10 @@ CREATE EXTENSION postgres_fdw;
 - 把外部表当成本地普通表随便高频查询
 - 忽略网络延迟和外部系统压力
 - 用户映射和权限设计不清楚
+- 外部库不可用时，没有给应用准备降级方案
 
 ## 先记住这三句
 
 - 外部表看起来像表，数据不一定在本库。
 - 跨系统查询要重视性能和权限。
 - 外部数据封装器不是万能同步工具。
-

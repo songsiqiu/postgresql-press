@@ -24,6 +24,28 @@ EXEC SQL SELECT name INTO :user_name FROM demo_users WHERE id = 1;
 
 这不是给 `psql` 直接执行的 SQL，而是写在 C 源码里的嵌入式 SQL，需要先经过 `ecpg` 预处理。
 
+## 应用里怎么写
+
+一个嵌入式 SQL 程序通常长这样：
+
+```c
+EXEC SQL BEGIN DECLARE SECTION;
+const char *email = "a@example.com";
+char name[100];
+EXEC SQL END DECLARE SECTION;
+
+EXEC SQL CONNECT TO app_db USER app_user;
+
+EXEC SQL
+  SELECT name INTO :name
+  FROM demo_users
+  WHERE email = :email;
+
+EXEC SQL DISCONNECT;
+```
+
+这段代码的重点是：宿主变量要放在声明区，SQL 通过 `:变量名` 引用它们。
+
 ## 容易混淆的词
 
 | 词 | 区别 |
@@ -54,6 +76,7 @@ EXEC SQL SELECT name INTO :user_name FROM demo_users WHERE id = 1;
 - 把 `EXEC SQL` 当作普通 SQL 命令
 - 忽略预处理这一步
 - 在新手阶段过早深入历史系统接口
+- 宿主变量声明不清楚，导致预处理或编译阶段出错
 
 ## 先记住这三句
 

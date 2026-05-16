@@ -226,6 +226,16 @@
 | rollback plan | 回滚方案 | 变更失败时恢复到可接受状态的计划 |
 | staging table | 中间表 | 导入或清洗数据时临时承接数据的表 |
 | audit log | 审计记录 | 记录谁在什么时候做了什么变化的日志 |
+| result set | 结果集 | SQL 执行后返回的数据和状态集合 |
+| host variable | 宿主变量 | 嵌入式 SQL 中由宿主语言提供的变量 |
+| notification payload | 通知负载 | `NOTIFY` 附带的小段文本内容 |
+| foreign data wrapper | 外部数据封装器 | 让 PostgreSQL 访问外部数据源的机制 |
+| foreign table | 外部表 | 通过外部数据封装器访问的数据表 |
+| user mapping | 用户映射 | 当前库用户到外部服务器用户的映射关系 |
+| logical replication slot | 逻辑复制槽 | 为逻辑解码或逻辑复制保留 WAL 的复制槽 |
+| retained WAL | 保留的 WAL | 因复制或恢复需要暂时不能删除的 WAL |
+| shared buffer | 共享缓冲区 | PostgreSQL 自己管理的数据页缓存 |
+| TOAST table | TOAST 表 | 存放大字段片段的关联存储表 |
 | conditional function | 条件函数 | 根据空值或比较结果返回不同值的函数 |
 | numeric type | 数值类型 | 保存整数、精确小数或近似小数的类型 |
 | character type | 字符类型 | 保存文本的类型 |

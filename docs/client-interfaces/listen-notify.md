@@ -34,6 +34,28 @@ NOTIFY note_events, 'note_created';
 
 通知内容应该尽量小。真正的数据通常让应用收到通知后再查询。
 
+## 应用里怎么写
+
+应用通常会留一个专门连接监听通知：
+
+```js
+await client.query('LISTEN note_events')
+
+client.on('notification', async (message) => {
+  if (message.channel === 'note_events') {
+    await reloadNoteList()
+  }
+})
+```
+
+发送方只发轻量提醒：
+
+```sql
+NOTIFY note_events, 'changed';
+```
+
+如果监听连接断开，应用要重连并重新 `LISTEN`。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -67,6 +89,7 @@ NOTIFY note_events, 'note_created';
 - 在通知负载里塞大量数据
 - 监听连接断开后没有重连逻辑
 - 收到通知后不重新查询真实状态
+- 用通知承载必须送达的支付、订单等关键消息
 
 ## 先记住这三句
 

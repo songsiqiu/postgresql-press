@@ -179,6 +179,17 @@
 | rollback plan | 回滚方案 |
 | staging table | 中间表 |
 | audit log | 审计记录 |
+| result set | 结果集 |
+| host variable | 宿主变量 |
+| notification payload | 通知负载 |
+| foreign data wrapper | 外部数据封装器 |
+| foreign table | 外部表 |
+| user mapping | 用户映射 |
+| logical replication slot | 逻辑复制槽 |
+| retained WAL | 保留的 WAL |
+| shared buffer | 共享缓冲区 |
+| dirty page | 脏页 |
+| TOAST table | TOAST 表 |
 
 ## 表达禁忌
 

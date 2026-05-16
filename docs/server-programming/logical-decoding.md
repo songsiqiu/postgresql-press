@@ -36,6 +36,27 @@ WHERE id = 10;
 - 下游消费是否及时
 - 解码输出格式由插件决定
 
+## 可照着理解：复制槽风险检查
+
+先查看复制槽：
+
+```sql
+SELECT slot_name, plugin, slot_type, active, restart_lsn
+FROM pg_replication_slots;
+```
+
+如果某个逻辑复制槽长期不活跃，下游又不消费，PostgreSQL 可能需要保留越来越多 WAL。
+
+可以再结合磁盘和 WAL 目录增长一起判断：
+
+```sql
+SELECT pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn)) AS retained_wal
+FROM pg_replication_slots
+WHERE restart_lsn IS NOT NULL;
+```
+
+不要随便删除复制槽，先确认下游同步链路是否还需要它。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -69,6 +90,7 @@ WHERE id = 10;
 - 把逻辑解码当成普通查询接口
 - 忽略 WAL 保留导致磁盘增长
 - 没确认下游能处理重复或延迟事件
+- 看到 WAL 增长只清文件，不查复制槽
 
 ## 先记住这三句
 
