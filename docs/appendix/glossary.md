@@ -218,6 +218,14 @@
 | `SET LOCAL` | `SET LOCAL` | 只在当前事务内临时设置参数 |
 | trigger function | 触发器函数 | 被触发器自动调用的函数 |
 | blocking session | 阻塞会话 | 正在让其他会话等待的会话 |
+| search path | 搜索路径 | PostgreSQL 查找未限定对象名时使用的路径 |
+| failover | 故障切换 | 主库故障时把服务切到可用实例的过程 |
+| replication lag | 复制延迟 | 从库落后主库的时间或日志位置差距 |
+| cursor pagination | 游标式分页 | 用上一页边界继续读取下一页的分页方式 |
+| migration | 迁移 | 数据库结构或数据从一个状态变到另一个状态的过程 |
+| rollback plan | 回滚方案 | 变更失败时恢复到可接受状态的计划 |
+| staging table | 中间表 | 导入或清洗数据时临时承接数据的表 |
+| audit log | 审计记录 | 记录谁在什么时候做了什么变化的日志 |
 | conditional function | 条件函数 | 根据空值或比较结果返回不同值的函数 |
 | numeric type | 数值类型 | 保存整数、精确小数或近似小数的类型 |
 | character type | 字符类型 | 保存文本的类型 |

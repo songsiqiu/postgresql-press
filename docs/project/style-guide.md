@@ -171,6 +171,14 @@
 | trigger function | 触发器函数 |
 | row lock | 行锁 |
 | blocking session | 阻塞会话 |
+| search path | 搜索路径 |
+| failover | 故障切换 |
+| replication lag | 复制延迟 |
+| cursor pagination | 游标式分页 |
+| migration | 迁移 |
+| rollback plan | 回滚方案 |
+| staging table | 中间表 |
+| audit log | 审计记录 |
 
 ## 表达禁忌
 

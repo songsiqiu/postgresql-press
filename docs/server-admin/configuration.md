@@ -25,6 +25,33 @@
 3. 需要重启还是重载？
 4. 有没有回滚方案？
 
+## 操作步骤：确认参数来源
+
+查看当前参数值：
+
+```sql
+SHOW max_connections;
+SHOW shared_buffers;
+SHOW log_min_duration_statement;
+```
+
+查看某个参数是否需要重启，以及它来自哪里：
+
+```sql
+SELECT name, setting, unit, context, source
+FROM pg_settings
+WHERE name IN ('max_connections', 'shared_buffers', 'log_min_duration_statement');
+```
+
+`context` 可以帮助判断修改后是会话生效、重载生效，还是需要重启。改生产配置前，先把当前值、修改原因、回滚值记下来。
+
+## 排障场景：改了配置但没生效
+
+1. 确认改的是当前实例使用的配置文件。
+2. 用 `SHOW` 或 `pg_settings` 看数据库实际值。
+3. 看这个参数是否需要重启。
+4. 如果只需要重载，确认是否已经执行重载。
+
 ## 练习题
 
 1. 连接数属于哪类配置？
@@ -46,10 +73,10 @@
 - 看到网上建议就直接套参数
 - 把连接数调很大，却没有看机器资源和连接池
 - 改完配置不知道是否生效
+- 改错实例的配置文件，还以为 PostgreSQL 没读配置
 
 ## 先记住这三句
 
 - 配置要服务具体问题。
 - 改配置前先确认生效方式。
 - 参数不是越大越好。
-

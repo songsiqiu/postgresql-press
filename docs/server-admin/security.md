@@ -31,6 +31,36 @@ GRANT SELECT, INSERT, UPDATE ON notes TO app_user;
 - 对外连接是否有限制
 - 权限是否按表、模式、操作拆清楚
 
+## 操作步骤：创建只读角色
+
+```sql
+CREATE ROLE app_readonly LOGIN PASSWORD 'change_me';
+
+GRANT USAGE ON SCHEMA public TO app_readonly;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO app_readonly;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT SELECT ON TABLES TO app_readonly;
+```
+
+前两条授权影响已有对象，`ALTER DEFAULT PRIVILEGES` 影响未来新建对象。它们不是一回事。
+
+## 排障场景：有权限但仍不能查
+
+先确认当前连接身份：
+
+```sql
+SELECT current_user;
+```
+
+再确认表权限：
+
+```sql
+SELECT has_table_privilege(current_user, 'public.notes', 'SELECT');
+```
+
+如果表权限是 `true`，但仍报错，还要继续检查模式 `USAGE` 权限、视图依赖的底层表权限，以及是否连错数据库。
+
 ## 练习题
 
 1. `LOGIN` 表示什么？
@@ -52,6 +82,7 @@ GRANT SELECT, INSERT, UPDATE ON notes TO app_user;
 - 所有应用共用一个数据库账号
 - 为了省事直接给超级用户
 - 只管能不能连上，不管连上后能做什么
+- 只给了表权限，却忘了模式 `USAGE` 权限
 
 ## 先记住这三句
 

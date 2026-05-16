@@ -31,6 +31,31 @@ $$;
 
 调用者执行这个函数时，函数内部操作会按函数拥有者的权限执行。
 
+## 可照着跑：固定搜索路径
+
+安全定义者函数要尽量写清楚对象所在模式，并固定搜索路径：
+
+```sql
+CREATE OR REPLACE FUNCTION app.create_note(note_title text)
+RETURNS bigint
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = app, pg_temp
+AS $$
+DECLARE
+  new_id bigint;
+BEGIN
+  INSERT INTO app.notes (title)
+  VALUES (note_title)
+  RETURNING id INTO new_id;
+
+  RETURN new_id;
+END;
+$$;
+```
+
+`SET search_path = app, pg_temp` 是为了减少对象名被解析到非预期位置的风险。敏感函数里不要依赖模糊的默认搜索路径。
+
 ## 什么时候适合
 
 - 只开放一个非常明确的动作
@@ -71,6 +96,7 @@ $$;
 - 函数里没有严格校验输入
 - 搜索路径不明确，留下安全风险
 - 函数拥有者权限过大
+- 函数里使用未限定模式的对象名
 
 ## 先记住这三句
 

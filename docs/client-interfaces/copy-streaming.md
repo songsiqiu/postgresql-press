@@ -35,6 +35,28 @@ FROM STDIN WITH (FORMAT csv);
 - 先导入临时表再校验更稳
 - 出错时要能定位到数据来源
 
+## 应用里怎么写
+
+应用侧通常把上传文件先写入临时表，再做校验和入正式表：
+
+```sql
+CREATE TEMP TABLE import_events (
+  user_id bigint,
+  action text
+);
+
+COPY import_events (user_id, action)
+FROM STDIN WITH (FORMAT csv, HEADER true);
+
+INSERT INTO events (user_id, action)
+SELECT user_id, action
+FROM import_events
+WHERE user_id IS NOT NULL
+  AND action <> '';
+```
+
+真实应用中，`COPY FROM STDIN` 的数据流由驱动写入。数据库侧的原则是：先接住，再校验，再入正式表。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -68,6 +90,7 @@ COPY 很快，所以更要先确认格式和校验流程。
 - 没校验就导入正式表
 - 单次事务太大，失败后回滚成本高
 - 错误日志不足，无法定位坏数据
+- 上传文件格式变化后，导入代码没有同步更新
 
 ## 先记住这三句
 

@@ -34,6 +34,38 @@
 
 不要只重试失败的最后一条 SQL，因为前面的读取结果可能已经过期。
 
+## 应用里怎么写
+
+下面是一个带上限和退避的简化写法：
+
+```js
+async function runTransactionWithRetry(work, maxAttempts = 3) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const client = await pool.connect()
+
+    try {
+      await client.query('BEGIN')
+      const result = await work(client)
+      await client.query('COMMIT')
+      return result
+    } catch (error) {
+      await client.query('ROLLBACK')
+
+      const retryable = error.code === '40001' || error.code === '40P01'
+      if (!retryable || attempt === maxAttempts) {
+        throw error
+      }
+
+      await wait(attempt * 100)
+    } finally {
+      client.release()
+    }
+  }
+}
+```
+
+`40001` 常见于序列化失败，`40P01` 常见于死锁。真正项目里还要保证 `work` 这段业务动作适合重复执行。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -67,6 +99,7 @@
 - 只重试最后一条 SQL
 - 没有重试上限和等待策略
 - 重试的业务动作不是幂等的
+- 重试时没有重新读取前置数据
 
 ## 先记住这三句
 

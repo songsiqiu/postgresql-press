@@ -32,6 +32,37 @@
 - 数据量和停机窗口
 - 回滚方案
 
+## 操作步骤：导出并导入一张表
+
+导出：
+
+```sql
+\copy notes(id, user_id, body) TO 'notes.csv' WITH (FORMAT csv, HEADER true)
+```
+
+导入前先放进临时表或中间表：
+
+```sql
+CREATE TEMP TABLE import_notes (
+  id bigint,
+  user_id bigint,
+  body text
+);
+
+\copy import_notes(id, user_id, body) FROM 'notes.csv' WITH (FORMAT csv, HEADER true)
+```
+
+确认行数和关键字段后，再写入正式表。
+
+## 迁移后检查
+
+```sql
+SELECT count(*) FROM notes;
+SELECT count(*) FROM import_notes;
+```
+
+行数只是第一步，还要抽查关键查询、外键关系、唯一约束和应用最常用的页面。
+
 ## 练习题
 
 1. 临时导出的 CSV 能当完整备份吗？
@@ -55,10 +86,10 @@
 - 把导出文件当完整备份
 - 迁移前没检查扩展和权限
 - 只验证行数，不验证关键查询和业务流程
+- 不先导入中间表，脏数据直接进入正式表
 
 ## 先记住这三句
 
 - 导入导出不是完整备份。
 - 迁移前先查版本、权限和扩展。
 - 迁移后要验证数据和关键查询。
-

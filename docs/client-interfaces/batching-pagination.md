@@ -46,6 +46,28 @@ LIMIT 20;
 
 这种写法适合“加载更多”。它用上一页最后一条的 `id` 继续往后查，通常比很大的 `OFFSET` 更稳定。
 
+## 应用里怎么写
+
+第一页：
+
+```js
+const result = await db.query(
+  'SELECT id, title FROM notes ORDER BY id DESC LIMIT $1',
+  [20]
+)
+```
+
+下一页：
+
+```js
+const result = await db.query(
+  'SELECT id, title FROM notes WHERE id < $1 ORDER BY id DESC LIMIT $2',
+  [lastSeenId, 20]
+)
+```
+
+这里的 `lastSeenId` 来自上一页最后一条记录。接口返回时可以把它作为下一页游标交给前端。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -80,6 +102,7 @@ LIMIT 20;
 - 深分页仍然一直使用很大的 `OFFSET`
 - 每条数据单独提交，批量导入很慢
 - 后台任务一次性读完整张大表
+- 游标字段不唯一或排序不稳定，导致翻页漏数据
 
 ## 先记住这三句
 

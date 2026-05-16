@@ -27,6 +27,38 @@
 | BEFORE | 数据变化前执行 |
 | AFTER | 数据变化后执行 |
 
+## 可照着跑：审计更新时间
+
+```sql
+CREATE TABLE audit_notes (
+  id bigserial PRIMARY KEY,
+  note_id bigint NOT NULL,
+  changed_at timestamptz NOT NULL DEFAULT now(),
+  old_body text,
+  new_body text
+);
+
+CREATE OR REPLACE FUNCTION audit_note_update()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  INSERT INTO audit_notes(note_id, old_body, new_body)
+  VALUES (OLD.id, OLD.body, NEW.body);
+
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER audit_note_update_trigger
+AFTER UPDATE ON demo_notes
+FOR EACH ROW
+WHEN (OLD.body IS DISTINCT FROM NEW.body)
+EXECUTE FUNCTION audit_note_update();
+```
+
+这里用 `WHEN` 限制只有正文真的变化时才写审计记录，避免无意义日志。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -60,6 +92,7 @@
 - 触发器之间互相影响
 - 批量更新时行级触发器执行次数过多
 - 没有文档说明触发器做了什么
+- 没有 `WHEN` 条件，导致无变化更新也写大量审计
 
 ## 先记住这三句
 

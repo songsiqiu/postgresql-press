@@ -32,6 +32,36 @@ ADD COLUMN archived boolean NOT NULL DEFAULT false;
 
 删字段、删表、改类型这类操作可能丢数据。即使迁移工具提供回滚入口，也不代表业务上一定能安全回滚。
 
+## 应用里怎么写迁移
+
+给大表加字段时，尽量把“结构变化”和“数据回填”拆开：
+
+```sql
+ALTER TABLE notes
+ADD COLUMN archived boolean;
+```
+
+应用兼容新旧字段后，再分批回填：
+
+```sql
+UPDATE notes
+SET archived = false
+WHERE archived IS NULL
+  AND id BETWEEN 1 AND 10000;
+```
+
+确认数据都满足要求后，再考虑加 `NOT NULL` 和默认值：
+
+```sql
+ALTER TABLE notes
+ALTER COLUMN archived SET DEFAULT false;
+
+ALTER TABLE notes
+ALTER COLUMN archived SET NOT NULL;
+```
+
+这样做比一次性在大表上做重变更更容易控制风险。
+
 ## 练习题
 
 1. 迁移文件主要记录什么？
@@ -55,10 +85,10 @@ ADD COLUMN archived boolean NOT NULL DEFAULT false;
 - 手工改生产库，没有迁移记录
 - 在线上大表上直接加重锁变更
 - 只写向前迁移，不考虑失败处理
+- 应用还没兼容新结构，就先上线破坏性迁移
 
 ## 先记住这三句
 
 - 迁移文件记录结构变化。
 - 上线前要评估锁和数据兼容。
 - 回滚不是万能安全网。
-
