@@ -1,0 +1,21 @@
+:root {
+  --vp-c-brand-1: #2f6f8f;
+  --vp-c-brand-2: #24586f;
+  --vp-c-brand-3: #183f50;
+  --vp-home-hero-name-color: #16384a;
+  --vp-home-hero-name-background: transparent;
+  --vp-home-hero-image-background-image: none;
+  --vp-home-hero-image-filter: none;
+}
+
+.VPContent {
+  background: linear-gradient(180deg, #f8f6f1 0%, #ffffff 24%);
+}
+
+.VPHomeHero .name {
+  letter-spacing: 0;
+}
+
+.VPNavBarTitle {
+  font-weight: 700;
+}
