@@ -207,6 +207,13 @@
 | `pg_stat_archiver` | `pg_stat_archiver` |
 | `pg_stat_user_tables` | `pg_stat_user_tables` |
 | `pg_default_acl` | `pg_default_acl` |
+| RTO | RTO |
+| extension version | 扩展版本 |
+| `pg_stat_ssl` | `pg_stat_ssl` |
+| `pg_auth_members` | `pg_auth_members` |
+| tablespace location | 表空间位置 |
+| major upgrade | 大版本升级 |
+| minor upgrade | 小版本升级 |
 
 ## 表达禁忌
 

@@ -29,6 +29,25 @@ DROP DATABASE old_demo;
 - 备份、恢复、权限边界需要更清楚
 - 不适合只靠表名前缀区分所有业务
 
+## 操作步骤：确认你连的是哪个库
+
+执行高风险命令前，先确认连接目标：
+
+```sql
+SELECT current_database(), current_user, inet_server_addr(), inet_server_port();
+```
+
+查看已有数据库：
+
+```sql
+SELECT datname
+FROM pg_database
+WHERE datistemplate = false
+ORDER BY datname;
+```
+
+删除数据库前，要确认没有连接正在使用，并确认备份和恢复方案。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -62,6 +81,7 @@ DROP DATABASE old_demo;
 - 用表名前缀代替清晰的数据库或模式边界
 - 没确认连接目标就执行删除命令
 - 把测试数据和生产数据放在同一空间
+- 在错误环境里执行 `DROP DATABASE`
 
 ## 先记住这三句
 

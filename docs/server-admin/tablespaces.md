@@ -34,6 +34,24 @@ CREATE TABLE hot_events (
 - 迁移历史数据到较慢但容量大的存储
 - 管理存储配额和目录结构
 
+## 操作步骤：查看对象所在表空间
+
+```sql
+SELECT schemaname, tablename, tablespace
+FROM pg_tables
+WHERE schemaname = 'public'
+ORDER BY tablename;
+```
+
+查看表空间位置：
+
+```sql
+SELECT spcname, pg_tablespace_location(oid) AS location
+FROM pg_tablespace;
+```
+
+迁移或备份前，要确认目标环境也有对应路径和权限。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -67,6 +85,7 @@ CREATE TABLE hot_events (
 - 没规划磁盘和权限就创建表空间
 - 滥用表空间导致运维复杂
 - 忘记备份和迁移时要处理表空间位置
+- 目标环境没有相同路径，恢复时才发现表空间不可用
 
 ## 先记住这三句
 

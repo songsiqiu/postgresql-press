@@ -253,6 +253,13 @@
 | `pg_stat_archiver` | `pg_stat_archiver` | 查看 WAL 归档成功和失败统计的系统视图 |
 | `pg_stat_user_tables` | `pg_stat_user_tables` | 查看用户表统计信息的系统视图 |
 | `pg_default_acl` | `pg_default_acl` | 查看默认权限配置的系统目录 |
+| RTO | RTO | 业务能接受的恢复耗时目标 |
+| extension version | 扩展版本 | 当前数据库扩展安装的版本 |
+| `pg_stat_ssl` | `pg_stat_ssl` | 查看当前连接 SSL 信息的系统视图 |
+| `pg_auth_members` | `pg_auth_members` | 查看角色成员关系的系统目录 |
+| tablespace location | 表空间位置 | 表空间对应的文件系统路径 |
+| major upgrade | 大版本升级 | 跨 PostgreSQL 主版本的升级 |
+| minor upgrade | 小版本升级 | 同一主版本内的补丁升级 |
 | conditional function | 条件函数 | 根据空值或比较结果返回不同值的函数 |
 | numeric type | 数值类型 | 保存整数、精确小数或近似小数的类型 |
 | character type | 字符类型 | 保存文本的类型 |

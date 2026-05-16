@@ -29,6 +29,24 @@
 - 机器内存和其他服务占用
 - 真实业务高峰
 
+## 操作步骤：调参前记录证据
+
+先记录当前值：
+
+```sql
+SELECT name, setting, unit, context
+FROM pg_settings
+WHERE name IN ('shared_buffers', 'work_mem', 'maintenance_work_mem', 'max_connections');
+```
+
+再记录连接数和大查询情况。改完后，保留同样指标做对比。不要只凭“感觉变快了”判断调参有效。
+
+如果要调 `work_mem`，要先估算并发：
+
+```text
+可能同时运行的连接数 x 每条查询里的排序/哈希操作数 x work_mem
+```
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -62,6 +80,7 @@
 - 把 `work_mem` 调很大却忽略并发数量
 - 只看总内存，不看连接和操作数量
 - 调参后不观察效果
+- 改完参数没有记录改前改后的指标
 
 ## 先记住这三句
 

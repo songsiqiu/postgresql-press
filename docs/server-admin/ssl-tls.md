@@ -27,6 +27,17 @@ sslmode=require
 
 它表示客户端要求使用 SSL 连接。更严格的校验还会涉及证书验证和主机名验证。
 
+## 操作步骤：确认当前连接是否使用 SSL
+
+```sql
+SELECT ssl, version, cipher
+FROM pg_stat_ssl
+WHERE pid = pg_backend_pid();
+```
+
+如果 `ssl` 是 `false`，说明当前连接没有使用 SSL。  
+如果业务要求加密连接，要同时检查客户端 `sslmode` 和服务端访问规则。
+
 ## 和权限的关系
 
 SSL/TLS 只解决“连接路上是否加密、是否校验证书”的问题。
@@ -73,6 +84,7 @@ GRANT SELECT ON TABLE orders TO app_user;
 - 证书和私钥权限过宽
 - 客户端只要求加密，却没有按需要做身份校验
 - 改了 `pg_hba.conf` 后忘记重新加载配置
+- 以为连接串写了 `sslmode` 就一定已经按预期加密
 
 ## 先记住这三句
 

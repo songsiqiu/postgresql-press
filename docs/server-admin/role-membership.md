@@ -34,6 +34,24 @@ GRANT readonly TO alice;
 - 权限口径更统一
 - 不用给每个用户重复写同样授权
 
+## 操作步骤：查看角色成员关系
+
+```sql
+SELECT r.rolname AS role_name, m.rolname AS member_name
+FROM pg_auth_members am
+JOIN pg_roles r ON r.oid = am.roleid
+JOIN pg_roles m ON m.oid = am.member
+ORDER BY r.rolname, m.rolname;
+```
+
+回收成员关系：
+
+```sql
+REVOKE readonly FROM alice;
+```
+
+回收用户权限时，不只看直接授权，还要看它通过哪些角色组继承了权限。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -67,6 +85,7 @@ GRANT readonly TO alice;
 - 权限直接散给个人，后续很难统一调整
 - 不清楚谁继承了哪些角色
 - 回收用户权限时忘记检查成员关系
+- 删除用户前没有先梳理它属于哪些角色组
 
 ## 先记住这三句
 
