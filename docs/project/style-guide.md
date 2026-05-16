@@ -190,6 +190,15 @@
 | shared buffer | 共享缓冲区 |
 | dirty page | 脏页 |
 | TOAST table | TOAST 表 |
+| DSN | DSN |
+| `AbortController` | `AbortController` |
+| event trigger | 事件触发器 |
+| DDL audit | DDL 审计 |
+| frontend connection | 前台连接 |
+| WAL writer | WAL 写入进程 |
+| HOT chain | HOT 链 |
+| index access method | 索引访问方法 |
+| Query message | Query 消息 |
 
 ## 表达禁忌
 

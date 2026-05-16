@@ -24,6 +24,26 @@
 
 手动取消则通常来自应用、驱动或管理员操作。
 
+## 应用里怎么写
+
+前端请求已经取消时，后端也应该尽量停止没必要继续跑的查询。伪代码可以这样理解：
+
+```js
+const controller = new AbortController()
+
+request.on('close', () => {
+  controller.abort()
+})
+
+await db.query({
+  text: 'SELECT * FROM reports WHERE created_at >= $1',
+  values: [fromDate],
+  signal: controller.signal
+})
+```
+
+不同驱动的取消 API 不一样，但目标一致：请求不需要结果时，不要让数据库继续做无意义工作。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -57,6 +77,7 @@
 - 把取消查询当作性能优化
 - 取消了语句却忘记处理事务状态
 - 用户离开页面后后台 SQL 仍继续跑很久
+- 取消后没有给用户明确提示，前端误以为查询成功
 
 ## 先记住这三句
 

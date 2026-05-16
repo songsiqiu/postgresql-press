@@ -33,6 +33,22 @@ postgresql://app_user:secret@db.example.com:5432/app_db?sslmode=require
 - 给不同环境使用不同账号
 - 不在日志里完整打印连接串
 
+## 应用里怎么写
+
+推荐让应用只读取一个入口：
+
+```bash
+DATABASE_URL="postgresql://app_user:secret@db.example.com:5432/app_db?sslmode=require"
+```
+
+代码里只引用环境变量：
+
+```js
+const databaseUrl = process.env.DATABASE_URL
+```
+
+记录日志时不要直接输出完整连接串，可以只输出主机、数据库名和连接参数摘要。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -66,6 +82,7 @@ postgresql://app_user:secret@db.example.com:5432/app_db?sslmode=require
 - 日志里打印完整连接串
 - 开发、测试、生产共用账号
 - 连接参数写在多个地方，口径不一致
+- 本地临时连接串混进生产部署配置
 
 ## 先记住这三句
 

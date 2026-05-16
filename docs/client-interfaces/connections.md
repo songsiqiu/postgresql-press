@@ -27,6 +27,20 @@ postgresql://app_user:secret@localhost:5432/app_db
 
 它表达的是：用 `app_user` 这个用户，连接本机 `5432` 端口上的 `app_db` 数据库。
 
+## 应用里怎么写
+
+应用里通常不要把连接信息散落在代码各处，而是集中从环境变量读取：
+
+```js
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  max: 10,
+  connectionTimeoutMillis: 3000
+})
+```
+
+`max` 要和数据库承受能力、应用实例数一起算。比如 5 个应用实例，每个池子 `max=20`，理论上就可能占用 100 个连接。
+
 ## 为什么需要连接池
 
 应用每次请求都新建数据库连接，成本会很高。连接池会复用连接，让应用更稳定。
@@ -54,10 +68,10 @@ postgresql://app_user:secret@localhost:5432/app_db
 - 服务启动了，但连错数据库
 - 用户名对了，权限却不够
 - 连接池开得太大，把数据库拖慢
+- 多个应用实例各自开大连接池，总连接数被放大
 
 ## 先记住这三句
 
 - 连接信息要拆开看。
 - 能连上不代表有权限。
 - 连接池是复用连接，不是无限扩容。
-

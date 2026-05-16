@@ -30,6 +30,32 @@ SELECT * FROM users WHERE name = $1
 
 事务应该围绕一个完整业务动作。比如创建订单时，订单、订单明细、库存扣减要保持一致，就应该放在同一个事务里。
 
+## 应用里怎么写
+
+一个清晰的应用访问模式通常长这样：
+
+```js
+async function createNote(userId, body) {
+  return db.query(
+    'INSERT INTO notes(user_id, body) VALUES ($1, $2) RETURNING id',
+    [userId, body]
+  )
+}
+```
+
+如果一个业务动作要多步修改，就显式开事务：
+
+```js
+async function archiveUser(userId) {
+  return runInTransaction(async (client) => {
+    await client.query('UPDATE demo_users SET archived = true WHERE id = $1', [userId])
+    await client.query('UPDATE notes SET archived = true WHERE user_id = $1', [userId])
+  })
+}
+```
+
+把“单条安全 SQL”和“多步事务动作”分清楚，代码会更好维护。
+
 ## 练习题
 
 1. 为什么不能直接拼接用户输入到 SQL？
@@ -51,10 +77,10 @@ SELECT * FROM users WHERE name = $1
 - 拼接 SQL 字符串处理用户输入
 - 一个事务里做太多慢操作
 - 忘记释放连接或归还连接池
+- 把所有数据库访问都藏在过厚的工具函数里，事务边界看不清
 
 ## 先记住这三句
 
 - 用户输入必须参数化。
 - 事务跟着业务动作走。
 - 连接要复用，也要及时归还。
-

@@ -31,6 +31,31 @@ ORM 会把表和对象做映射，让你用更接近应用语言的方式操作�
 | 迁移 | 是否支持结构变更管理 |
 | 原生 SQL | 遇到复杂查询时是否容易落回 SQL |
 
+## 应用里怎么写
+
+ORM 适合普通增删改查，复杂统计可以保留原生 SQL：
+
+```js
+const users = await orm.user.findMany({
+  where: { archived: false },
+  take: 20
+})
+```
+
+复杂查询不要硬拧成难读的 ORM 链式调用：
+
+```js
+const result = await db.query(`
+  SELECT date_trunc('day', created_at) AS day, count(*) AS total
+  FROM orders
+  WHERE created_at >= $1
+  GROUP BY day
+  ORDER BY day
+`, [fromDate])
+```
+
+工具选择不是二选一。关键是团队能看懂、能测试、能排查执行计划。
+
 ## 练习题
 
 1. 驱动主要解决什么问题？
@@ -54,10 +79,10 @@ ORM 会把表和对象做映射，让你用更接近应用语言的方式操作�
 - 以为用了 ORM 就不用理解 SQL
 - 复杂查询硬用 ORM 拼到很难维护
 - 不看连接池和事务行为就上线
+- ORM 自动生成的 SQL 很慢，却没人去看实际 SQL
 
 ## 先记住这三句
 
 - 驱动是基础通道。
 - ORM 是抽象，不是 SQL 替代品。
 - 工具选择要看事务、连接和可维护性。
-

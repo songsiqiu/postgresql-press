@@ -236,6 +236,15 @@
 | retained WAL | 保留的 WAL | 因复制或恢复需要暂时不能删除的 WAL |
 | shared buffer | 共享缓冲区 | PostgreSQL 自己管理的数据页缓存 |
 | TOAST table | TOAST 表 | 存放大字段片段的关联存储表 |
+| DSN | DSN | 数据源名称，常用来指数据库连接配置 |
+| `AbortController` | `AbortController` | 应用里用于取消异步操作的控制器 |
+| event trigger | 事件触发器 | 数据库级事件发生时执行的触发器 |
+| DDL audit | DDL 审计 | 记录建表、改表等结构操作的审计方式 |
+| frontend connection | 前台连接 | 应用或用户连进来执行 SQL 的连接 |
+| WAL writer | WAL 写入进程 | 负责推进 WAL 写入的后台进程 |
+| HOT chain | HOT 链 | HOT 更新形成的行版本链 |
+| index access method | 索引访问方法 | PostgreSQL 索引底层访问方式 |
+| Query message | Query 消息 | 前后端协议里发送简单查询的消息 |
 | conditional function | 条件函数 | 根据空值或比较结果返回不同值的函数 |
 | numeric type | 数值类型 | 保存整数、精确小数或近似小数的类型 |
 | character type | 字符类型 | 保存文本的类型 |

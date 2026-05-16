@@ -39,6 +39,26 @@ ORDER BY created_at DESC;
 
 不要只因为某个索引听起来高级就使用它。
 
+## 图解：索引类型先看查询
+
+```text
+WHERE user_id = 10 ORDER BY created_at
+  -> 常先看 B-tree
+
+WHERE tags @> ARRAY['sql']
+  -> 可能看 GIN
+
+WHERE during && tstzrange(...)
+  -> 可能看 GiST
+
+超大日志表按时间追加
+  -> 可能看 BRIN
+```
+
+## 为什么会这样
+
+不同索引访问方法擅长回答的问题不同。索引不是越高级越好，而是越贴合查询条件、操作符和数据分布越好。
+
 ## 练习题
 
 1. 最常见的索引访问方法是什么？
@@ -62,10 +82,10 @@ ORDER BY created_at DESC;
 - 所有索引都默认只理解成 B-tree
 - 为了 JSONB 建索引，却不看实际查询操作符
 - 听说 BRIN 省空间就盲目使用
+- 查询条件变了，索引策略却一直不复查
 
 ## 先记住这三句
 
 - B-tree 最常见。
 - 特殊索引服务特殊查询。
 - 选索引先看查询条件和操作符。
-

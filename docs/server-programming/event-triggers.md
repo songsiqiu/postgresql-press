@@ -25,6 +25,32 @@
 - 配合发布流程检查对象变更
 - 做数据库级别审计补充
 
+## 可照着跑：记录 DDL 发生过
+
+```sql
+CREATE TABLE ddl_audit_log (
+  id bigserial PRIMARY KEY,
+  happened_at timestamptz NOT NULL DEFAULT now(),
+  tag text NOT NULL
+);
+
+CREATE OR REPLACE FUNCTION log_ddl_event()
+RETURNS event_trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  INSERT INTO ddl_audit_log(tag)
+  VALUES (tg_tag);
+END;
+$$;
+
+CREATE EVENT TRIGGER audit_ddl
+ON ddl_command_end
+EXECUTE FUNCTION log_ddl_event();
+```
+
+这个例子只记录事件标签。真实审计要更谨慎，避免影响正常迁移发布。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -58,6 +84,7 @@
 - 没测试就限制 DDL，影响迁移发布
 - 触发器逻辑太复杂，排查困难
 - 忽略事件触发器自身的权限和维护成本
+- 事件触发器失败导致 DDL 发布被阻断
 
 ## 先记住这三句
 
