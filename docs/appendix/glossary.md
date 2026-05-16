@@ -245,6 +245,14 @@
 | HOT chain | HOT 链 | HOT 更新形成的行版本链 |
 | index access method | 索引访问方法 | PostgreSQL 索引底层访问方式 |
 | Query message | Query 消息 | 前后端协议里发送简单查询的消息 |
+| audit scope | 审计范围 | 明确哪些行为需要留痕、在哪里记录、保留多久 |
+| password rotation | 密码轮换 | 定期替换密码并同步应用配置的过程 |
+| publication | 发布 | 逻辑复制中源端声明要发送哪些变化的对象 |
+| subscription | 订阅 | 逻辑复制中目标端接收变化的对象 |
+| archive command | 归档命令 | PostgreSQL 用来把 WAL 归档到外部位置的命令 |
+| `pg_stat_archiver` | `pg_stat_archiver` | 查看 WAL 归档成功和失败统计的系统视图 |
+| `pg_stat_user_tables` | `pg_stat_user_tables` | 查看用户表统计信息的系统视图 |
+| `pg_default_acl` | `pg_default_acl` | 查看默认权限配置的系统目录 |
 | conditional function | 条件函数 | 根据空值或比较结果返回不同值的函数 |
 | numeric type | 数值类型 | 保存整数、精确小数或近似小数的类型 |
 | character type | 字符类型 | 保存文本的类型 |

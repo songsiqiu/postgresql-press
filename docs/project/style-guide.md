@@ -199,6 +199,14 @@
 | HOT chain | HOT 链 |
 | index access method | 索引访问方法 |
 | Query message | Query 消息 |
+| audit scope | 审计范围 |
+| password rotation | 密码轮换 |
+| publication | 发布 |
+| subscription | 订阅 |
+| archive command | 归档命令 |
+| `pg_stat_archiver` | `pg_stat_archiver` |
+| `pg_stat_user_tables` | `pg_stat_user_tables` |
+| `pg_default_acl` | `pg_default_acl` |
 
 ## 表达禁忌
 

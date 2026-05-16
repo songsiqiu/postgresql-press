@@ -28,6 +28,24 @@ GRANT SELECT ON TABLES TO readonly;
 
 默认权限和“谁创建对象”有关。如果不同角色都会建表，要确认默认权限设置在正确的创建者上下文里。
 
+## 操作步骤：新表权限排查
+
+新表上线后应用没权限，可以按这个顺序查：
+
+```sql
+SELECT current_user;
+\dp public.notes
+```
+
+再检查默认权限是否设置在正确创建者名下：
+
+```sql
+SELECT defaclrole::regrole, defaclnamespace::regnamespace, defaclobjtype, defaclacl
+FROM pg_default_acl;
+```
+
+如果迁移脚本换了执行账号，原来设置在旧账号名下的默认权限不会自动替新账号生效。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -61,6 +79,7 @@ GRANT SELECT ON TABLES TO readonly;
 - 不知道默认权限和创建者有关
 - 切换迁移账号后默认权限失效
 - 表授权了，但序列没有授权
+- 只测旧表权限，没有测试新建表权限
 
 ## 先记住这三句
 

@@ -24,6 +24,26 @@ FROM pg_replication_slots;
 
 这能看到复制槽名字、类型和是否活跃。
 
+## 排障步骤：WAL 目录快速增长
+
+先看复制槽是否不活跃：
+
+```sql
+SELECT slot_name, slot_type, active, restart_lsn
+FROM pg_replication_slots;
+```
+
+估算每个槽保留了多少 WAL：
+
+```sql
+SELECT slot_name,
+       pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn)) AS retained
+FROM pg_replication_slots
+WHERE restart_lsn IS NOT NULL;
+```
+
+如果某个槽已经废弃，确认下游不再需要后再删除。不要直接删 WAL 文件。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -58,6 +78,7 @@ FROM pg_replication_slots;
 - 只看复制是否断开，不看 WAL 是否积压
 - 不监控复制槽活跃状态
 - 把复制槽当成备份
+- 直接删除 WAL 文件，导致恢复或复制链路损坏
 
 ## 先记住这三句
 

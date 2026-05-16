@@ -31,6 +31,21 @@ ORDER BY count(*) DESC;
 
 这条 SQL 可以先看连接大致分布：活跃、空闲、事务中空闲等。
 
+## 排障步骤：连接打满
+
+1. 先看连接按状态分布。
+2. 再按应用名、用户、来源地址分组。
+3. 查是否有大量 `idle in transaction`。
+4. 对应用连接池做总量估算：实例数乘以单实例池大小。
+5. 先处理泄漏和长事务，再考虑调大上限。
+
+```sql
+SELECT usename, application_name, client_addr, state, count(*)
+FROM pg_stat_activity
+GROUP BY usename, application_name, client_addr, state
+ORDER BY count(*) DESC;
+```
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -65,6 +80,7 @@ ORDER BY count(*) DESC;
 - 每个应用实例都开很大的连接池
 - 空闲事务长期不提交
 - 不区分后台任务和在线请求的连接预算
+- 没有设置应用名，排查时不知道连接来自哪个服务
 
 ## 先记住这三句
 

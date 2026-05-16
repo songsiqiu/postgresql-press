@@ -28,6 +28,29 @@ ORDER BY total_exec_time DESC
 LIMIT 10;
 ```
 
+## 操作步骤：找最值得优化的 SQL
+
+先找总耗时高的 SQL：
+
+```sql
+SELECT query, calls, total_exec_time, mean_exec_time
+FROM pg_stat_statements
+ORDER BY total_exec_time DESC
+LIMIT 10;
+```
+
+再找平均耗时高的 SQL：
+
+```sql
+SELECT query, calls, mean_exec_time, rows
+FROM pg_stat_statements
+WHERE calls > 10
+ORDER BY mean_exec_time DESC
+LIMIT 10;
+```
+
+总耗时高可能是高频，平均耗时高可能是单次慢。处理方向不一样。
+
 ## 适合场景
 
 - 找最耗总时间的 SQL
@@ -68,6 +91,7 @@ LIMIT 10;
 - 只看平均耗时，不看执行次数
 - 只看单条慢 SQL，不看总消耗
 - 忘记优化前后记录对比数据
+- 重置统计后没有记录时间点，前后数据混着看
 
 ## 先记住这三句
 

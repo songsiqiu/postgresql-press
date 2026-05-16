@@ -26,6 +26,29 @@ autovacuum 主要做两类事情：
 - 有长事务长期存在
 - autovacuum 日志显示任务频繁被取消或耗时很长
 
+## 排障步骤：怀疑 autovacuum 跟不上
+
+先看表的更新、删除和清理时间：
+
+```sql
+SELECT relname, n_dead_tup, last_autovacuum, last_autoanalyze
+FROM pg_stat_user_tables
+ORDER BY n_dead_tup DESC
+LIMIT 10;
+```
+
+再看是否有长事务：
+
+```sql
+SELECT pid, now() - xact_start AS xact_age, state, query
+FROM pg_stat_activity
+WHERE xact_start IS NOT NULL
+ORDER BY xact_age DESC
+LIMIT 10;
+```
+
+如果长事务一直存在，先处理长事务，再讨论调大 autovacuum。
+
 ## 容易混淆的词
 
 | 词 | 新手解释 |
@@ -59,6 +82,7 @@ autovacuum 不是噪音，它常常是在替你维持数据库健康。
 - 只调参数，不处理长事务
 - 不看表级别的更新删除频率
 - 忽略统计信息对执行计划的影响
+- 死盯全局参数，不看具体是哪张表跟不上
 
 ## 先记住这三句
 
